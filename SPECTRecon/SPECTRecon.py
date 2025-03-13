@@ -24,7 +24,6 @@ def ensure_packages_installed():
                 slicer.util.pip_install(package_name)
             else:
                 package_name = package
-            importlib.import_module(package)
         except ImportError:
             slicer.util.pip_install(package_name)
         progress.value = int((i+1)/num_packages * 100)
