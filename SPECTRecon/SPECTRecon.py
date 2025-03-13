@@ -1,5 +1,6 @@
 import slicer
 import importlib
+import pkg_resources
 
 def ensure_packages_installed():
     """Ensure required packages are installed."""
@@ -8,25 +9,19 @@ def ensure_packages_installed():
     progress.value = 0
     progress.setCancelButton(None)
     
+    installed_packages = {f'{pkg.key}=={pkg.version}'for pkg in pkg_resources.working_set}
     required_packages = {
-        "dill": "0.3.9",
-        "torchquad": "0.4.1",
-        "pytomography": "3.3.2",
-        "spectpsftoolbox": "0.1.0",
-        "beautifulsoup4": None,
+        "dill==0.3.9",
+        "torchquad==0.4.1",
+        "pytomography==3.3.2",
+        "spectpsftoolbox==0.1.0",
+        "beautifulsoup4==4.13.3",
     }
-    num_packages = len(required_packages)
+    missing_all = required_packages - installed_packages
+    num_packages = len(missing_all)
     logging.info('ensure_packages_installed called')
-    for i, (package, version) in enumerate(required_packages.items()):
-        try:
-            if version:
-                package_name = f"{package}=={version}"
-                slicer.util.pip_install(package_name)
-            else:
-                package_name = package
-            importlib.import_module(package)
-        except ImportError:
-            slicer.util.pip_install(package_name)
+    for i, missing in enumerate(missing_all):
+        slicer.util.pip_install(missing)
         progress.value = int((i+1)/num_packages * 100)
     progress.close()
 
@@ -506,6 +501,7 @@ class SPECTReconWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         return photopeak_idx, upperwindow_idx, lowerwindow_idx
 
     def onReconstructButton(self):
+        logging.info('recon called')
         from Logic.VtkkmrmlUtils import get_filesNM_from_NMNodes
         progress = slicer.util.createProgressDialog()
         progress.labelText = "Reconstructing..."

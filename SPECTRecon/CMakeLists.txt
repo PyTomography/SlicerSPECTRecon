@@ -5,6 +5,7 @@ set(MODULE_NAME SPECTRecon)
 set(MODULE_PYTHON_SCRIPTS
   ${MODULE_NAME}.py
   Logic/Algorithms.py
+  Logic/AdvancedPSF.py
   Logic/Callbacks.py
   Logic/MetadataUtils.py
   Logic/Priors.py
