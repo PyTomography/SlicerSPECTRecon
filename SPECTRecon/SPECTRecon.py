@@ -16,6 +16,7 @@ def ensure_packages_installed():
         "pytomography==3.3.2",
         "spectpsftoolbox==0.1.0",
         "beautifulsoup4==4.13.3",
+        "torchvision==0.21"
     }
     missing_all = required_packages - installed_packages
     num_packages = len(missing_all)
