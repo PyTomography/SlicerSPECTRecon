@@ -2,6 +2,15 @@ import slicer
 import importlib
 import pkg_resources
 
+class InstallError(Exception):
+    def __init__(self, message, restartRequired=False):
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
+        self.message = message
+        self.restartRequired = restartRequired
+    def __str__(self):
+        return self.message
+
 def ensure_packages_installed():
     """Ensure required packages are installed."""
     progress = slicer.util.createProgressDialog()
@@ -9,6 +18,16 @@ def ensure_packages_installed():
     progress.value = 0
     progress.setCancelButton(None)
     
+    # Torch installed separately in slicer to get GPU version 
+    try:
+        import PyTorchUtils
+    except ModuleNotFoundError as e:
+        raise InstallError("This module requires PyTorch extension. Install it from the Extensions Manager.")
+    minimumTorchVersion = "1.10.2" # per https://github.com/PyTomography/PyTomography/blob/main/pyproject.toml
+    minimumTorchvisionVersion = "0.21" # per https://github.com/PyTomography/PyTomography/blob/main/pyproject.toml
+    torchLogic = PyTorchUtils.PyTorchUtilsLogic()
+    if not torchLogic.torchInstalled():
+        torch = torchLogic.installTorch(askConfirmation=False, torchVersionRequirement = f">={minimumTorchVersion}", torchvisionVersionRequirement=f">={minimumTorchvisionVersion}")
     installed_packages = {f'{pkg.key}=={pkg.version}'for pkg in pkg_resources.working_set}
     required_packages = {
         "dill==0.3.9",
@@ -16,8 +35,8 @@ def ensure_packages_installed():
         "pytomography==3.3.2",
         "spectpsftoolbox==0.1.0",
         "beautifulsoup4==4.13.3",
-        "torchvision==0.21"
     }
+
     missing_all = required_packages - installed_packages
     num_packages = len(missing_all)
     logging.info('ensure_packages_installed called')

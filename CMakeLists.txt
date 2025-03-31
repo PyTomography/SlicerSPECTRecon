@@ -10,7 +10,7 @@ set(EXTENSION_CONTRIBUTORS "Obed Dzikunu (QURIT), Luke Polson (QURIT), Maziar Sa
 set(EXTENSION_DESCRIPTION "This module implement GPU accelerated SPECT image reconstruction. User Manual: https://github.com/PyTomography/Slicer/blob/main/User_Manual.md")
 set(EXTENSION_ICONURL "https://raw.githubusercontent.com/PyTomography/Slicer/main/Pytomography.png")
 set(EXTENSION_SCREENSHOTURLS "https://raw.githubusercontent.com/PyTomography/Slicer/main/images/screenshot.png")
-set(EXTENSION_DEPENDS "NA") # Specified as a list or "NA" if no dependencies
+set(EXTENSION_DEPENDS "PyTorch") # Specified as a list or "NA" if no dependencies
 
 #-----------------------------------------------------------------------------
 # Extension dependencies
